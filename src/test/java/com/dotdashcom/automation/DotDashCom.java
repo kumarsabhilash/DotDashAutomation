@@ -128,6 +128,13 @@ public class DotDashCom {
 	  obj.navigateNotif();
 	  Assert.assertTrue(obj.clickNotif());
   }
+  @Test(priority=17)
+  public void fileUpload(){
+	  
+	  obj.fileUpload();
+	  String uploadedText = obj.getFileUploadText();
+	  Assert.assertTrue(uploadedText.toLowerCase().contains("file uploaded"));
+  }
   @AfterClass
   public void afterClass() {
 	  obj.killBrowser();

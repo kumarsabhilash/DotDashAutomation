@@ -9,6 +9,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
@@ -33,6 +34,7 @@ public class PageActions {
 		ChromeOptions options = new ChromeOptions();
 		options.addArguments("--disable-notifications");
 		driver = new ChromeDriver(options);
+		
 		log.info("Opened the browser with option --disable-notifications");
 	}
 	public void navigateUrl(String URL) {
@@ -137,10 +139,10 @@ public class PageActions {
 		
 		WebElement from = driver.findElement(By.xpath(Locators.fromDrag));
 		WebElement to = driver.findElement(By.xpath(Locators.toDrag));
-		
-        Actions actions = new Actions(driver);
-        actions.clickAndHold(from).moveToElement(to).build().perform();
-        actions.moveToElement(to);
+		int xoffset = to.getLocation().getX();
+		int yoffset = to.getLocation().getY();
+		Actions act = new Actions(driver);
+		act.dragAndDropBy(from, xoffset+xoffset/3, yoffset+4).perform();
 	}
 	
 	
@@ -248,17 +250,14 @@ public class PageActions {
 	
 	public void fileUpload() {
 		navigateUrl(Constants.FILEUPLOAD);
-		
+		String fName=System.getProperty("user.dir")+"\\upload_file\\abc.txt";
 		Actions builder = new Actions(driver);
-
-		builder.moveToElement(driver.findElement(By.id(Locators.uploadButtonId))).click().build().perform();
-		// "C:\Users\anand\Downloads\some-file.txt.crdownload"
 		
-		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
+		builder.moveToElement(driver.findElement(By.id(Locators.uploadButtonId))).click().build().perform();
 		driver.switchTo()
         .activeElement()
         .sendKeys(
-                "C:\\Users\\anand\\Downloads\\abc.txt");
+                fName);
 		
 		Robot robot = null;
 		try {
@@ -272,6 +271,13 @@ public class PageActions {
 		robot.keyRelease(KeyEvent.VK_ESCAPE);
 		driver.findElement(By.id(Locators.uploadButtonSubmit)).click();
 		
+		
+	}
+	public String getFileUploadText() {
+		String text="";
+		WebElement el = driver.findElement(By.tagName("h3"));
+		text = el.getText();
+		return text;
 	}
 	public void navigateFloatingMenu() {
 		navigateUrl(Constants.FLOATINGMENU);
@@ -401,10 +407,8 @@ public class PageActions {
 	public void killBrowser() {
 		driver.quit();
 	}
+	public static void main(String[] args) {
+		
+	}
 	
-//	public static void main(String args[]) {
-//		PageActions obj = new PageActions();
-//		obj.navigateNotif();
-//		System.out.println(obj.clickNotif());
-//	}
 }
